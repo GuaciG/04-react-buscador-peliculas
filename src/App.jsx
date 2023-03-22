@@ -1,15 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import './App.css'
-//import { useRef } from 'react'
 import { Movies } from './components/Movies'
 import { useMovies } from './hooks/useMovies'
+import debounce from 'just-debounce-it'
 
 function useSearch() {
   const [search, updateSearch] = useState('')
   const [error, setError] = useState(null)
+  const isFirstInput = useRef(true)
 
   //validar de forma controlada
   useEffect(() => {
+    if (isFirstInput.current) {
+      isFirstInput.current = search === ''
+      return
+    }
+
     if (search === '') {
       setError('No se puede buscar una película vacía')
       return
@@ -32,41 +38,40 @@ function useSearch() {
 }
 
 function App() {
-  const { movies: mappedMovies } = useMovies()
-  const { search, updateSearch, error } = useSearch()
-  //const [query, setQuery] = useState('')
+  const [sort, setSort] = useState(false)
 
-  //const inputRef = useRef()
+  const { search, updateSearch, error } = useSearch()
+  const { movies, loading, getMovies } = useMovies({ search, sort })
+
+  const debouncedGetMovies = useCallback(
+    debounce(search => {
+      console.log('search', search)
+      getMovies({ search })
+    }, 300),
+    [getMovies]
+  )
 
   const handleSubmit = event => {
     event.preventDefault()
-    //using useRef:
-    //const inputEl = inputRef.current
-    //const value = inputEl.value
+    getMovies({ search })
+  }
 
-    //using DOM element from name property:
-    //const { query } = Object.fromEntries(
-    //  new window.FormData(event.target)
-    //)
-    console.log({ search })
-
-    // from here we could make form validation
-    //if (query === ''){
-    //  setError('No se ingresó ninguna película')
-    //}
+  const handleSort = () => {
+    setSort(!sort)
   }
 
   //Gestionar de forma controlada el formulario con el estado:
   const handleChange = event => {
-    //const newQuery = event.target.value
-    // if (newQuery.startsWith(' ')) return
-    updateSearch(event.target.value)
+    const newSearch = event.target.value
+    if (newSearch.startsWith(' ')) return
+    updateSearch(newSearch)
+    debouncedGetMovies(newSearch)
   }
 
   return (
     <div className='page'>
       <header>
-        <h1>Buscador de películas</h1>
+        <h1>Movie Finder</h1>
         <form className='form' onSubmit={handleSubmit}>
           <input
             style={{
@@ -76,17 +81,16 @@ function App() {
             onChange={handleChange}
             value={search}
             name='query'
-            placeholder='Avengers, Star Wars, The Matrix...'
+            placeholder='Search your movie here...'
           />
-          <button type='submit'>Buscar</button>
+          <input type='checkbox' onChange={handleSort} checked={sort} />
+          <button type='submit'>Search</button>
         </form>
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </header>
 
-      <main>
-        <Movies movies={mappedMovies} />
-      </main>
+      <main>{loading ? <p>Loading...</p> : <Movies movies={movies} />}</main>
     </div>
   )
 }
