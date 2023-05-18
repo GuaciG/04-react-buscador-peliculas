@@ -666,6 +666,7 @@ select,
 button,
 textarea {
   -webkit-appearance: none;
+  appearance: none;
 }
 
 textarea {
