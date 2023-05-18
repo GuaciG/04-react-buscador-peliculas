@@ -1,26 +1,22 @@
-## Enunciado
+## Movie Finder App
 
-Crea una aplicación para buscar películas
+API: - https://www.omdbapi.com/
+Get an API Key on the website itself by registering your email.
 
-API a usar: - https://www.omdbapi.com/
-Consigue la API Key en la propia página web registrando tu email.
+Requirements:
 
-Requerimientos:
+✅ An input is needed to enter a movie title as well as a search button.
 
-✅ Necesita mostrar un input para buscar la película y un botón para buscar.
+✅ The movies will be displayed as well as the title, year and poster.
 
-✅ Lista las películas y muestra el título, año y poster.
+✅ Show the movies in a responsive grid.
 
-✅ Que el formulario funcione
+✅ Fetch data to the API.
 
-✅ Haz que las películas se muestren en un grid responsive.
+First iteration:
 
-✅ Hacer el fetching de datos a la API
+✅ Avoid doing the same search twice.
 
-Primera iteración:
+✅ Make the search happen automatically when you type.
 
-✅ Evitar que se haga la misma búsqueda dos veces seguidas.
-
-✅ Haz que la búsqueda se haga automáticamente al escribir.
-
-✅ Evita que se haga la búsqueda continuamente al escribir (debounce)
+✅ Prevent searching continuously when typing (debounce)
